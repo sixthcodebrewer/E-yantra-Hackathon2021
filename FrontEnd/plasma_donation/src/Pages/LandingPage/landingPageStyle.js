@@ -74,10 +74,4 @@ export const useStyles = makeStyles((theme) => ({
     fontWeight: "500",
     borderRadius: 50,
   },
-  infoCardName: {
-    textTransform: "capitalize",
-    fontFamily: "Gotham",
-    fontWeight: "500",
-    margin: 10,
-  },
 }));

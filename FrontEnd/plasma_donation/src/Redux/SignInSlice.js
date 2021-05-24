@@ -7,6 +7,7 @@ export const sendSignup = createAsyncThunk(
     const phone = parseInt(data.phone);
     const res = await api.post("/api/auth/sendOTP", { phone });
     const dataResponse = JSON.parse(JSON.stringify(res.data));
+    console.log(dataResponse);
     return dataResponse;
   }
 );
@@ -17,7 +18,6 @@ const signupSlice = createSlice({
     error: "",
     message: "",
     isLoading: false,
-    response: false,
     dataSend: null,
   },
   reducers: {},
@@ -31,7 +31,7 @@ const signupSlice = createSlice({
     },
     [sendSignup.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.response = true;
+      state.signupSendStatus = true;
       state.dataSend = action.payload;
     },
   },

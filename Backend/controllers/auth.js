@@ -14,6 +14,7 @@ const { send } = require("process");
 // environment variables
 const JWT_AUTH_TOKEN = process.env.JWT_AUTH_TOKEN;
 const smsKey = process.env.SMS_SECRET_KEY;
+const JWT_REFRESH_TOKEN = process.env.JWT_REFRESH_TOKEN;
 
 /*
 '/sendOTP' route: 
@@ -25,6 +26,7 @@ appended creating fullhash.
 
 */
 const sendOtp = (req, res) => {
+  console.log(req.body.phone);
   res.status(200).send(genAndSendOtp(req.body.phone));
 };
 
@@ -66,7 +68,7 @@ const verifyOtp = async (req, res) => {
 
       if (n !== 0) {
         genPasswordHash(req.body.password, phone);
-        res.status(201).send({ msg: "password changed successfully", phone });
+        res.status(201).send({ msg: "Otp changed successfully" });
       }
 
       genPasswordHash(req.body.password, phone);
@@ -105,6 +107,7 @@ const verifyOtp = async (req, res) => {
       });
     }
   } catch (err) {
+    console.log(err);
     res.status(500).send({ msg: err });
   }
 };
@@ -135,13 +138,6 @@ const donorLogin = async (req, res) => {
         }
       );
 
-      var result = await getUser(req.body.phone);
-      if (result === null) {
-        returnResponse = { msg: "Success", phone: req.body.phone };
-      } else {
-        returnResponse = { msg: "Success", phone: null };
-      }
-
       res
         .status(200)
         .cookie("accessToken", accessToken, {
@@ -154,7 +150,7 @@ const donorLogin = async (req, res) => {
           expires: new Date(new Date().getTime() + 86400 * 1000),
           sameSite: "strict",
         })
-        .send(returnResponse);
+        .json(await getUser(req.body.phone));
     } else {
       res.status(401).json({ success: false, msg: "Wrong Password" });
     }
@@ -169,16 +165,15 @@ const updatePasswordSendOtp = (req, res) => {
   donorCredentials
     .find({ mobileNo: phone })
     .then((result) => {
+      console.log(`in updatePasswordSendOtp ${result}`);
       if (result.length !== 0) {
         res.status(200).send(genAndSendOtp(phone));
       } else {
-        res.status(200).send({
-          msg: `No account with mobile number ${phone}`,
-          success: false,
-        });
+        res.status(400).send({ msg: `No account with mobile number ${phone}` });
       }
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).send(err);
     });
 };

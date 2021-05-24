@@ -2,17 +2,17 @@ const Donor = require("../models/Donor");
 
 const addDonorInfo = (req, res) => {
   const newUser = new Donor({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
+    firstName: req.body.firstName.toLowerCase(),
+    lastName: req.body.lastName.toLowerCase(),
     age: req.body.age,
-    gender: req.body.gender,
+    gender: req.body.gender.toLowerCase(),
     mobileNo: req.body.mobileNo,
     alternateNo: req.body.alternateNo,
     address: {
-      lane: req.body.address.lane,
+      lane: req.body.address.lane.toLowerCase(),
       city: req.body.address.city.toLowerCase(),
-      district: req.body.address.district,
-      state: req.body.address.state,
+      district: req.body.address.district.toLowerCase(),
+      state: req.body.address.state.toLowerCase(),
       pinCode: req.body.address.pinCode,
     },
 
@@ -23,9 +23,11 @@ const addDonorInfo = (req, res) => {
   newUser
     .save()
     .then((user) => {
+      console.log(user);
       res.status(200).send({ msg: "User created Successfully" });
     })
     .catch((err) => {
+      console.log(err);
       res.status(400).send({
         err: "Not able to save user in DB",
       });
@@ -36,17 +38,17 @@ const updateDonorInfo = (req, res) => {
   Donor.updateOne(
     { mobileNo: req.uniqueMobileNo },
     {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
+      firstName: req.body.firstName.toLowerCase(),
+      lastName: req.body.lastName.toLowerCase(),
       age: req.body.age,
-      gender: req.body.gender,
+      gender: req.body.gender.toLowerCase(),
       mobileNo: req.body.mobileNo,
       alternateNo: req.body.alternateNo,
       address: {
-        lane: req.body.address.lane,
+        lane: req.body.address.lane.toLowerCase(),
         city: req.body.address.city.toLowerCase(),
-        district: req.body.address.district,
-        state: req.body.address.state,
+        district: req.body.address.district.toLowerCase(),
+        state: req.body.address.state.toLowerCase(),
         pinCode: req.body.address.pinCode,
       },
 
@@ -55,9 +57,11 @@ const updateDonorInfo = (req, res) => {
     }
   )
     .then((user) => {
+      // console.log(user);
       res.status(200).send({ msg: "Update Successful" });
     })
     .catch((err) => {
+      // console.log(err);
       res.status(400).send({
         err: err,
         msg: "No able to update",
@@ -65,15 +69,4 @@ const updateDonorInfo = (req, res) => {
     });
 };
 
-const getDonorInfo = async (req, res) => {
-  try {
-    const donorInfo = await Donor.findOne({ mobileNo: req.uniqueMobileNo });
-    res.status(200).send(donorInfo);
-  } catch (err) {
-    res.status(400).send({
-      err: err,
-    });
-  }
-};
-
-module.exports = { addDonorInfo, updateDonorInfo, getDonorInfo };
+module.exports = { addDonorInfo, updateDonorInfo };

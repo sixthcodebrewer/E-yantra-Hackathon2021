@@ -12,7 +12,6 @@ import {
   IconButton,
   OutlinedInput,
   Input,
-  CircularProgress,
 } from "@material-ui/core";
 import { useStyles } from "./donorRegistrationStyle";
 import Lottie from "lottie-react";
@@ -26,7 +25,6 @@ import { DashboardRegistration } from "../../constants/stringConstants";
 import { useDispatch, useSelector } from "react-redux";
 import { sendSignup } from "../../Redux/SignInSlice";
 import { sendOTP } from "../../Redux/OtpSendSlice";
-import { useHistory } from "react-router";
 
 function DonorRegistration({ width }) {
   const styles = useStyles();
@@ -39,24 +37,14 @@ function DonorRegistration({ width }) {
   const tabSmall = /xs|sm/.test(width);
   const dispatch = useDispatch();
   const responseData = useSelector((state) => state.SignupSlice.dataSend);
-  const LoadingForOtp = useSelector((state) => state.SignupSlice.isLoading);
-  const ResponseFromOtpGen = useSelector((state) => state.SignupSlice.response);
-  const SignupSendStatus = useSelector(
-    (state) => state.SignupOTPSlice.signupSendStatus
-  );
-  const history = useHistory();
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
 
-  useEffect(() => {
-    if (SignupSendStatus) {
-      history.push("/DonorDashboard");
-    }
-  }, [SignupSendStatus]);
-  const handleOtpSend = () => {
+  const handleOtpSend = (e) => {
     // Nothing for now
+    e.preventDefault();
     const data = {
       phone: mobile,
     };
@@ -74,7 +62,8 @@ function DonorRegistration({ width }) {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     const data = {
       hash: responseData.hash,
       phone: responseData.phone,
@@ -240,79 +229,60 @@ function DonorRegistration({ width }) {
                 />
               )}
             </FormControl>
-            <FormControl
-              style={{ width: "60%", marginTop: 30, marginBottom: 30 }}
-            >
-              {LoadingForOtp ? (
-                <CircularProgress style={{ alignSelf: "center" }} />
-              ) : (
-                <Button
-                  variant="outlined"
-                  className={styles.submitButon}
-                  component={motion.a}
-                  whileHover={{
-                    scale: 1.2,
-                    transition: { duration: 0.3 },
-                  }}
-                  onClick={handleOtpSend}
-                >
-                  Get OTP
-                </Button>
-              )}
-            </FormControl>
-            {ResponseFromOtpGen ? (
-              <div
-                data-aos="fade-down"
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  display: "flex",
-                  flexDirection: "column",
+            <FormControl style={{ width: "60%", marginTop: 30 }}>
+              <Button
+                variant="outlined"
+                className={styles.submitButon}
+                component={motion.a}
+                whileHover={{
+                  scale: 1.2,
+                  transition: { duration: 0.3 },
                 }}
+                onClick={handleOtpSend}
               >
-                <Divider style={{ width: "80%" }} />
-                <FormControl
-                  style={{
-                    width: "60%",
-                    marginTop: 10,
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: 30,
-                  }}
-                >
-                  <Typography variant="subtitle1" className={styles.lableStyle}>
-                    {DashboardRegistration.OTP}:
-                    <span style={{ color: "red" }}>*</span>
-                  </Typography>
-                  <OtpInput
-                    value={OTP}
-                    onChange={(value) => setOTP(value)}
-                    numInputs={6}
-                    separator={<span> &nbsp; &nbsp;</span>}
-                    inputStyle={{
-                      fontFamily: "Roboto",
-                      fontWeight: "700",
-                      fontSize: 14,
-                    }}
-                  />
-                  <Button
-                    variant="outlined"
-                    className={styles.submitButon}
-                    component={motion.a}
-                    whileHover={{
-                      scale: 1.2,
-                      transition: { duration: 0.3 },
-                    }}
-                    style={{ fontSize: 12, marginTop: 10 }}
-                    size="small"
-                    onClick={handleSubmit}
-                  >
-                    {DashboardRegistration.SUBMIT}
-                  </Button>
-                </FormControl>
-              </div>
-            ) : null}
+                Get OTP
+              </Button>
+            </FormControl>
+            <Divider style={{ width: "80%", marginTop: 30 }} />
+            <FormControl
+              style={{
+                width: "60%",
+                marginTop: 10,
+                display: "flex",
+                alignItems: "center",
+                marginBottom: 30,
+              }}
+            >
+              <Typography variant="subtitle1" className={styles.lableStyle}>
+                {DashboardRegistration.OTP}:
+                <span style={{ color: "red" }}>*</span>
+              </Typography>
+              <OtpInput
+                value={OTP}
+                onChange={(value) => setOTP(value)}
+                numInputs={6}
+                separator={<span> &nbsp; &nbsp;</span>}
+                inputStyle={{
+                  fontFamily: "Roboto",
+                  fontWeight: "700",
+                  fontSize: 14,
+                }}
+              />
+              <Button
+                variant="outlined"
+                className={styles.submitButon}
+                component={motion.a}
+                whileHover={{
+                  scale: 1.2,
+                  transition: { duration: 0.3 },
+                }}
+                style={{ fontSize: 12, marginTop: 10 }}
+                size="small"
+                onClick={handleSubmit}
+              >
+                {DashboardRegistration.SUBMIT}
+              </Button>
+            </FormControl>
           </Paper>
         </Grid>
       </Grid>

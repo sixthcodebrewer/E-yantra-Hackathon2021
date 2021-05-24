@@ -11,8 +11,6 @@ import {
   IconButton,
   OutlinedInput,
   Input,
-  Modal,
-  Box,
 } from "@material-ui/core";
 import { useStyles } from "../DonorRegistration/donorRegistrationStyle";
 import Lottie from "lottie-react";
@@ -22,10 +20,9 @@ import Aos from "aos";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { LoginPageData } from "../../constants/stringConstants";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loginUser } from "../../Redux/LoginSlice";
 import { useHistory } from "react-router-dom";
-import { getUser } from "../../Redux/FetchUser";
 
 function LoginPage({ width }) {
   const styles = useStyles();
@@ -35,30 +32,20 @@ function LoginPage({ width }) {
   const dispatch = useDispatch();
   const tabSmall = /xs|sm/.test(width);
   const history = useHistory();
-  const LoginSlice = useSelector((state) => state.LoginSlice.loginStatus);
-  const [open, setopen] = useState(false);
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
 
-  useEffect(() => {
-    if (LoginSlice) {
-      history.push("/DonorDashboard");
-    }
-  }, [LoginSlice]);
-
-  const handleClose = () => {
-    setopen(false);
-  };
-
-  const handleForgotPassword = () => {
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
     history.push("/ForgotPassword");
   };
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  const handleSubmit = () => {
     if (mobile === "" || password === "") {
-      setopen(true);
+      window.alert("Please enter the credentials!!");
     } else {
       const data = {
         phone: parseInt(mobile),
@@ -145,14 +132,11 @@ function LoginPage({ width }) {
               id="MobileNumber"
               placeholder="+91"
               value={mobile}
-              onChange={(e) => setmobile(e.target.value)}
+              onChange={(prev) => setmobile(prev.target.value)}
               {...varientProps}
               size="small"
               className="inputRounded"
               {...inputProps}
-              inputProps={{
-                maxLength: 10,
-              }}
             />
           </FormControl>
           <FormControl style={{ width: "60%", marginTop: 20 }}>
